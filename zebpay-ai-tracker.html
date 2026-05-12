@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZebPay AI Function Tracker</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8f8f8;
+      color: #1a1a1a;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    
+    header {
+      background: white;
+      border: 0.5px solid rgba(0,0,0,0.1);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+    }
+    h1 { 
+      font-size: 24px; 
+      font-weight: 500; 
+      margin: 0 0 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      color: white;
+      font-size: 16px;
+    }
+    .subtitle { color: #666; font-size: 14px; }
+    
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .controls input, .controls select {
+      flex: 1;
+      min-width: 200px;
+    }
+    
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: #f5f5f5;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .stat-label {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 500;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .section-header h2 {
+      font-size: 18px;
+      font-weight: 500;
+    }
+    
+    button {
+      background: transparent;
+      border: 0.5px solid rgba(0,0,0,0.2);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #1a1a1a;
+    }
+    button:hover {
+      background: #f5f5f5;
+    }
+    button:active {
+      transform: scale(0.98);
+    }
+    button.primary {
+      background: #E6F1FB;
+      color: #185FA5;
+      border-color: rgba(24, 95, 165, 0.3);
+    }
+    
+    .items {
+      display: grid;
+      gap: 12px;
+    }
+    
+    .item {
+      background: white;
+      border: 0.5px solid rgba(0,0,0,0.1);
+      border-radius: 12px;
+      padding: 1.25rem;
+      position: relative;
+    }
+    
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+      gap: 12px;
+    }
+    .item-title {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .item-dept {
+      font-size: 13px;
+      color: #666;
+    }
+    .item-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .item-actions button {
+      padding: 4px 12px;
+      font-size: 13px;
+    }
+    
+    .item-meta {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #666;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .status-pilot {
+      background: #FAEEDA;
+      color: #854F0B;
+    }
+    .status-production {
+      background: #EAF3DE;
+      color: #3B6D11;
+    }
+    .status-scaling {
+      background: #E6F1FB;
+      color: #185FA5;
+    }
+    .status-planning {
+      background: #f5f5f5;
+      color: #666;
+    }
+    
+    .before-after {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 0.75rem;
+      padding: 12px;
+      background: #f5f5f5;
+      border-radius: 8px;
+    }
+    .before-after-column {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .before-after-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .before-after-text {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    
+    .ai-output-section {
+      margin-bottom: 0.75rem;
+    }
+    .ai-output-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #666;
+      margin-bottom: 6px;
+    }
+    .ai-output-text {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #1a1a1a;
+    }
+    
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      padding-top: 0.75rem;
+      border-top: 0.5px solid rgba(0,0,0,0.1);
+    }
+    .metric {
+      display: flex;
+      flex-direction: column;
+    }
+    .metric-label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 2px;
+    }
+    .metric-value {
+      font-size: 16px;
+      font-weight: 500;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.4);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 2rem;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 700px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: #666;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 0.5px solid rgba(0,0,0,0.1);
+      background: white;
+      color: #1a1a1a;
+    }
+    .form-group textarea {
+      min-height: 80px;
+      resize: vertical;
+      font-family: inherit;
+    }
+    .form-group textarea.tall {
+      min-height: 100px;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: rgba(24, 95, 165, 0.3);
+      box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.1);
+    }
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #666;
+      background: white;
+      border: 0.5px solid rgba(0,0,0,0.1);
+      border-radius: 12px;
+    }
+    
+    .export-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .last-updated {
+      font-size: 13px;
+      color: #666;
+      margin-top: 0.5rem;
+    }
+
+    .form-section {
+      padding: 1rem;
+      background: #f5f5f5;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+    .form-section-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+      color: #1a1a1a;
+    }
+
+    @media (max-width: 768px) {
+      .before-after {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>
+        <div class="logo">Z</div>
+        ZebPay AI Function Tracker
+      </h1>
+      <div class="subtitle">Live tracker of AI outputs and achievements across all departments</div>
+      <div class="last-updated" id="lastUpdated"></div>
+    </header>
+    
+    <div class="stats" id="stats"></div>
+    
+    <div class="controls">
+      <input type="text" id="searchInput" placeholder="Search use cases, outputs, or departments...">
+      <select id="deptFilter">
+        <option value="">All departments</option>
+        <option value="People Care & Admin">People Care & Admin</option>
+        <option value="Tech & IT">Tech & IT</option>
+        <option value="Product">Product</option>
+        <option value="Marketing">Marketing</option>
+        <option value="Legal">Legal</option>
+        <option value="Compliance">Compliance</option>
+        <option value="Customer Care">Customer Care</option>
+        <option value="Accounts and Finance">Accounts and Finance</option>
+        <option value="Trade">Trade</option>
+      </select>
+      <select id="statusFilter">
+        <option value="">All statuses</option>
+        <option value="planning">Planning</option>
+        <option value="pilot">Pilot</option>
+        <option value="production">Production</option>
+        <option value="scaling">Scaling</option>
+      </select>
+    </div>
+    
+    <div class="section-header">
+      <h2>AI Use Cases</h2>
+      <div class="export-buttons">
+        <button onclick="exportData()">Export JSON</button>
+        <button onclick="importData()">Import JSON</button>
+        <button class="primary" onclick="openModal()">+ Add Use Case</button>
+      </div>
+    </div>
+    
+    <div class="items" id="items"></div>
+    <div class="empty-state" id="emptyState" style="display: none;">
+      No use cases found. Click "Add Use Case" to get started.
+    </div>
+  </div>
+  
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <div class="modal-header" id="modalTitle">Add AI Use Case</div>
+      <form id="form">
+        <div class="form-group">
+          <label>Department / Function</label>
+          <select id="department" required>
+            <option value="People Care & Admin">People Care & Admin</option>
+            <option value="Tech & IT">Tech & IT</option>
+            <option value="Product">Product</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Legal">Legal</option>
+            <option value="Compliance">Compliance</option>
+            <option value="Customer Care">Customer Care</option>
+            <option value="Accounts and Finance">Accounts and Finance</option>
+            <option value="Trade">Trade</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Use Case Title</label>
+          <input type="text" id="title" required placeholder="e.g., Automated KYC document verification">
+        </div>
+        
+        <div class="form-section">
+          <div class="form-section-title">Process Comparison</div>
+          <div class="form-group">
+            <label>Before AI (How we did it earlier)</label>
+            <textarea id="processBefore" class="tall" placeholder="Example: Manually reviewed each document, took 10 minutes per customer, prone to errors"></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label>With AI (How we do it now with AI)</label>
+            <textarea id="processAfter" class="tall" placeholder="Example: AI scans and verifies documents in 30 seconds, flags issues automatically"></textarea>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>AI Output / What AI Delivers</label>
+          <textarea id="aiOutput" class="tall" placeholder="Example: Verified KYC documents, risk scores, flagged suspicious documents, compliance reports"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Status</label>
+          <select id="status" required>
+            <option value="planning">Planning</option>
+            <option value="pilot">Pilot</option>
+            <option value="production">Production</option>
+            <option value="scaling">Scaling</option>
+          </select>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">Impact & Value</div>
+          
+          <div class="form-group">
+            <label>Time Saved (hours/week)</label>
+            <input type="number" id="timeSaved" min="0" step="0.5" placeholder="0">
+          </div>
+          
+          <div class="form-group">
+            <label>Cost Impact (₹/year - savings or reduction)</label>
+            <input type="number" id="costImpact" step="1000" placeholder="0">
+          </div>
+          
+          <div class="form-group">
+            <label>Revenue Impact (₹/year - additional revenue generated)</label>
+            <input type="number" id="revenueImpact" step="1000" placeholder="0">
+          </div>
+
+          <div class="form-group">
+            <label>Business Value (describe impact)</label>
+            <textarea id="businessValue" placeholder="Example: Faster onboarding, reduced fraud, better customer experience, compliance improvement"></textarea>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Users / Team Members Affected</label>
+          <input type="number" id="users" min="0" placeholder="0">
+        </div>
+        
+        <div class="form-group">
+          <label>Owner / Point of Contact</label>
+          <input type="text" id="owner" placeholder="Name of person managing this">
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="handleImport(event)">
+
+  <script>
+    let data = [];
+    let editingId = null;
+    const API_URL = "https://script.google.com/macros/s/AKfycbwp8GgrBmKcuo3-8SkEnvP9wPHT-PbuhKucrZlogJJBuahsqMOQZ8O0I5h0wbTsWx8/exec"
+    
+    async function loadData() {
+      try {
+        const response = await fetch(API_URL);
+        data = await response.json();
+
+        render();
+      } catch (err) {
+        console.error("Failed loading data", err);
+        alert("Could not load tracker data");
+      }
+    }
+
+    async function saveData(item) {
+      try {
+        await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8",
+        },
+        body: JSON.stringify(item),
+      });
+
+      } catch (err) {
+        console.error("Save failed", err);
+        alert("Failed saving data");
+      }
+    }
+    
+    function updateLastModified() {
+      const lastUpdated = localStorage.getItem('zebpayAITrackerLastUpdated');
+      if (lastUpdated) {
+        const date = new Date(lastUpdated);
+        document.getElementById('lastUpdated').textContent = 
+          `Last updated: ${date.toLocaleDateString('en-IN')} at ${date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}`;
+      }
+    }
+    
+    function render() {
+      renderStats();
+      renderItems();
+    }
+    
+    function renderStats() {
+      const totalUseCases = data.length;
+      const totalTimeSaved = data.reduce((sum, item) => sum + (item.timeSaved || 0), 0);
+      const totalCostImpact = data.reduce((sum, item) => sum + (item.costImpact || 0), 0);
+      const totalRevenueImpact = data.reduce((sum, item) => sum + (item.revenueImpact || 0), 0);
+      const productionCount = data.filter(item => item.status === 'production' || item.status === 'scaling').length;
+      const totalUsers = data.reduce((sum, item) => sum + (item.users || 0), 0);
+      
+      document.getElementById('stats').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Total use cases</div>
+          <div class="stat-value">${totalUseCases}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">In production</div>
+          <div class="stat-value">${productionCount}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Team members using AI</div>
+          <div class="stat-value">${totalUsers}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Time saved / week</div>
+          <div class="stat-value">${Math.round(totalTimeSaved)} hrs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Cost impact / year</div>
+          <div class="stat-value">₹${(totalCostImpact / 100000).toFixed(1)}L</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Revenue impact / year</div>
+          <div class="stat-value">₹${(totalRevenueImpact / 100000).toFixed(1)}L</div>
+        </div>
+      `;
+    }
+    
+    function renderItems() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const deptFilter = document.getElementById('deptFilter').value;
+      const statusFilter = document.getElementById('statusFilter').value;
+      
+      let filtered = data.filter(item => {
+        const matchesSearch = !search || 
+          item.title.toLowerCase().includes(search) || 
+          (item.processBefore && item.processBefore.toLowerCase().includes(search)) ||
+          (item.processAfter && item.processAfter.toLowerCase().includes(search)) ||
+          (item.aiOutput && item.aiOutput.toLowerCase().includes(search)) ||
+          item.department.toLowerCase().includes(search) ||
+          (item.owner && item.owner.toLowerCase().includes(search));
+        const matchesDept = !deptFilter || item.department === deptFilter;
+        const matchesStatus = !statusFilter || item.status === statusFilter;
+        return matchesSearch && matchesDept && matchesStatus;
+      });
+      
+      const container = document.getElementById('items');
+      const emptyState = document.getElementById('emptyState');
+      
+      if (filtered.length === 0) {
+        container.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      container.innerHTML = filtered.map(item => `
+        <div class="item">
+          <div class="item-header">
+            <div style="flex: 1;">
+              <div class="item-title">${escapeHtml(item.title)}</div>
+              <div class="item-dept">${escapeHtml(item.department)}${item.owner ? ' • ' + escapeHtml(item.owner) : ''}</div>
+            </div>
+            <div class="item-actions">
+              <button onclick="editItem(${item.id})">Edit</button>
+              <button onclick="deleteItem(${item.id})">Delete</button>
+            </div>
+          </div>
+          <div class="item-meta">
+            <span class="status-badge status-${item.status}">${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</span>
+            ${item.users ? `<span class="meta-item">${item.users} team members</span>` : ''}
+          </div>
+          
+          ${item.processBefore || item.processAfter ? `
+          <div class="before-after">
+            <div class="before-after-column">
+              <div class="before-after-label">Before AI</div>
+              <div class="before-after-text">${escapeHtml(item.processBefore || 'Not specified')}</div>
+            </div>
+            <div class="before-after-column">
+              <div class="before-after-label">With AI</div>
+              <div class="before-after-text">${escapeHtml(item.processAfter || 'Not specified')}</div>
+            </div>
+          </div>
+          ` : ''}
+          
+          ${item.aiOutput ? `
+          <div class="ai-output-section">
+            <div class="ai-output-label">AI Output</div>
+            <div class="ai-output-text">${escapeHtml(item.aiOutput)}</div>
+          </div>
+          ` : ''}
+          
+          ${item.businessValue ? `
+          <div class="ai-output-section">
+            <div class="ai-output-label">Business Value</div>
+            <div class="ai-output-text">${escapeHtml(item.businessValue)}</div>
+          </div>
+          ` : ''}
+          
+          <div class="metrics">
+            ${item.timeSaved ? `<div class="metric"><div class="metric-label">Time saved / week</div><div class="metric-value">${Math.round(item.timeSaved)} hrs</div></div>` : ''}
+            ${item.costImpact ? `<div class="metric"><div class="metric-label">Cost savings / year</div><div class="metric-value">₹${(item.costImpact / 100000).toFixed(1)}L</div></div>` : ''}
+            ${item.revenueImpact ? `<div class="metric"><div class="metric-label">Revenue impact / year</div><div class="metric-value">₹${(item.revenueImpact / 100000).toFixed(1)}L</div></div>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function openModal(id = null) {
+      editingId = id;
+      const modal = document.getElementById('modal');
+      const form = document.getElementById('form');
+      const title = document.getElementById('modalTitle');
+      
+      if (id) {
+        const item = data.find(d => d.id === id);
+        title.textContent = 'Edit Use Case';
+        document.getElementById('department').value = item.department;
+        document.getElementById('title').value = item.title;
+        document.getElementById('processBefore').value = item.processBefore || '';
+        document.getElementById('processAfter').value = item.processAfter || '';
+        document.getElementById('aiOutput').value = item.aiOutput || '';
+        document.getElementById('businessValue').value = item.businessValue || '';
+        document.getElementById('status').value = item.status;
+        document.getElementById('timeSaved').value = item.timeSaved || '';
+        document.getElementById('costImpact').value = item.costImpact || '';
+        document.getElementById('revenueImpact').value = item.revenueImpact || '';
+        document.getElementById('users').value = item.users || '';
+        document.getElementById('owner').value = item.owner || '';
+      } else {
+        title.textContent = 'Add Use Case';
+        form.reset();
+      }
+      
+      modal.classList.add('active');
+    }
+    
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+      editingId = null;
+    }
+    
+    function editItem(id) {
+      openModal(id);
+    }
+    
+    function deleteItem(id) {
+      if (confirm('Delete this use case?')) {
+        data = data.filter(item => item.id !== id);
+        saveData();
+        render();
+      }
+    }
+    
+    function exportData() {
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `zebpay-ai-tracker-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    
+    function importData() {
+      document.getElementById('fileInput').click();
+    }
+    
+    function handleImport(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (confirm(`Import ${imported.length} use cases? This will replace current data.`)) {
+            data = imported;
+            saveData();
+            render();
+          }
+        } catch (err) {
+          alert('Invalid JSON file');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    document.getElementById('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = {
+        id: editingId || Date.now(),
+        department: document.getElementById('department').value,
+        title: document.getElementById('title').value,
+        processBefore: document.getElementById('processBefore').value,
+        processAfter: document.getElementById('processAfter').value,
+        aiOutput: document.getElementById('aiOutput').value,
+        businessValue: document.getElementById('businessValue').value,
+        status: document.getElementById('status').value,
+        timeSaved: parseFloat(document.getElementById('timeSaved').value) || 0,
+        costImpact: parseFloat(document.getElementById('costImpact').value) || 0,
+        revenueImpact: parseFloat(document.getElementById('revenueImpact').value) || 0,
+        users: parseInt(document.getElementById('users').value) || 0,
+        owner: document.getElementById('owner').value
+      };
+      
+      if (editingId) {
+        const index = data.findIndex(item => item.id === editingId);
+        data[index] = formData;
+      } else {
+        data.push(formData);
+      }
+      
+      await saveData(formData);
+      await loadData();
+
+      closeModal();
+    });
+    
+    document.getElementById('searchInput').addEventListener('input', renderItems);
+    document.getElementById('deptFilter').addEventListener('change', renderItems);
+    document.getElementById('statusFilter').addEventListener('change', renderItems);
+    
+    document.getElementById('modal').addEventListener('click', (e) => {
+      if (e.target.id === 'modal') closeModal();
+    });
+    
+    loadData();
+  </script>
+</body>
+</html>
