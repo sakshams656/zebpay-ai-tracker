@@ -1,81 +1,323 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZebPay AI Function Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --blue-50: #E6F1FB;
+      --blue-100: #B5D4F4;
+      --blue-200: #85B7EB;
+      --blue-400: #378ADD;
+      --blue-600: #185FA5;
+      --blue-800: #0C447C;
+      --blue-900: #042C53;
+      --amber-50: #FAEEDA;
+      --amber-400: #BA7517;
+      --amber-600: #854F0B;
+      --green-50: #EAF3DE;
+      --green-600: #3B6D11;
+      --gray-50: #F1EFE8;
+      --gray-100: #D3D1C7;
+      --gray-400: #888780;
+      --gray-600: #5F5E5A;
+      --gray-900: #2C2C2A;
+
+      --bg-page: #F0F4F9;
+      --bg-card: #ffffff;
+      --bg-surface: #F7FAFD;
+      --bg-input: #ffffff;
+      --text-primary: #0A1628;
+      --text-secondary: #4A5568;
+      --text-muted: #8A96A3;
+      --border-subtle: rgba(24, 95, 165, 0.12);
+      --border-medium: rgba(24, 95, 165, 0.2);
+      --border-strong: rgba(24, 95, 165, 0.35);
+      --accent: #185FA5;
+      --accent-hover: #0C447C;
+      --accent-bg: #E6F1FB;
+      --accent-text: #185FA5;
+      --shadow-sm: 0 1px 3px rgba(24,95,165,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 16px rgba(24,95,165,0.08), 0 2px 4px rgba(0,0,0,0.04);
+      --shadow-lg: 0 8px 32px rgba(24,95,165,0.12), 0 4px 8px rgba(0,0,0,0.06);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #0D1B2E;
+      --bg-card: #132338;
+      --bg-surface: #0A1525;
+      --bg-input: #1A2D45;
+      --text-primary: #E8F1FA;
+      --text-secondary: #8BAECF;
+      --text-muted: #4D7094;
+      --border-subtle: rgba(85, 160, 230, 0.12);
+      --border-medium: rgba(85, 160, 230, 0.2);
+      --border-strong: rgba(85, 160, 230, 0.35);
+      --accent: #55A0E6;
+      --accent-hover: #85B7EB;
+      --accent-bg: rgba(55, 138, 221, 0.15);
+      --accent-text: #85B7EB;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #f8f8f8;
-      color: #1a1a1a;
-      padding: 2rem;
-      line-height: 1.6;
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
     }
-    .container { max-width: 1400px; margin: 0 auto; }
-    
-    header {
-      background: white;
-      border: 0.5px solid rgba(0,0,0,0.1);
-      border-radius: 12px;
-      padding: 1.5rem 2rem;
-      margin-bottom: 2rem;
+
+    /* Subtle grid texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, var(--border-subtle) 1px, transparent 0);
+      background-size: 32px 32px;
+      pointer-events: none;
+      z-index: 0;
     }
-    h1 { 
-      font-size: 24px; 
-      font-weight: 500; 
-      margin: 0 0 0.5rem 0;
+
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* ─── HEADER ─── */
+    .header {
       display: flex;
-      align-items: center;
-      gap: 12px;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+      padding: 1.75rem 2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
     }
-    .logo {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      border-radius: 8px;
+
+    .header-left { display: flex; align-items: center; gap: 1rem; }
+
+    .logo-mark {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--blue-600) 0%, var(--blue-400) 100%);
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 500;
-      color: white;
-      font-size: 16px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(24, 95, 165, 0.3);
     }
-    .subtitle { color: #666; font-size: 14px; }
-    
-    .controls {
+
+    .logo-mark svg { width: 26px; height: 26px; fill: white; }
+
+    .header-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+    }
+
+    .header-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 3px;
+      font-weight: 400;
+    }
+
+    .header-right {
       display: flex;
-      gap: 12px;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
     }
-    .controls input, .controls select {
-      flex: 1;
-      min-width: 200px;
+
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      color: var(--text-secondary);
     }
-    
-    .stats {
+    .theme-toggle:hover {
+      background: var(--accent-bg);
+      border-color: var(--border-strong);
+      color: var(--accent);
+    }
+    .theme-toggle svg { width: 18px; height: 18px; }
+
+    /* ─── STATS ─── */
+    .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(6, 1fr);
       gap: 12px;
       margin-bottom: 2rem;
     }
+
+    @media (max-width: 1100px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 640px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+
     .stat-card {
-      background: #f5f5f5;
-      border-radius: 8px;
-      padding: 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.1rem 1.25rem;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
     }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--blue-400), var(--blue-200));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .stat-card:hover::before { opacity: 1; }
+
     .stat-label {
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 8px;
     }
     .stat-value {
-      font-size: 24px;
-      font-weight: 500;
+      font-family: 'Syne', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1;
     }
-    
+    .stat-value.blue { color: var(--blue-600); }
+    [data-theme="dark"] .stat-value.blue { color: var(--blue-200); }
+
+    /* ─── TOOLBAR ─── */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .search-wrap {
+      flex: 1;
+      min-width: 220px;
+      position: relative;
+    }
+    .search-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--text-muted);
+    }
+    .search-wrap input {
+      width: 100%;
+      padding: 0 12px 0 38px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-medium);
+      background: var(--bg-input);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .search-wrap input::placeholder { color: var(--text-muted); }
+    .search-wrap input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-bg);
+    }
+
+    select {
+      height: 40px;
+      padding: 0 32px 0 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-medium);
+      background: var(--bg-input);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238A96A3' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      transition: all 0.2s;
+    }
+    select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      height: 40px;
+      padding: 0 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-medium);
+      background: var(--bg-input);
+      color: var(--text-secondary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn:hover { background: var(--bg-surface); border-color: var(--border-strong); color: var(--text-primary); }
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary {
+      background: var(--blue-600);
+      color: white;
+      border-color: var(--blue-600);
+      box-shadow: 0 2px 8px rgba(24, 95, 165, 0.25);
+    }
+    .btn-primary:hover {
+      background: var(--blue-800);
+      border-color: var(--blue-800);
+      color: white;
+      box-shadow: 0 4px 12px rgba(24, 95, 165, 0.35);
+    }
+    .btn-primary svg, .btn svg { width: 15px; height: 15px; }
+
+    /* ─── SECTION HEADER ─── */
     .section-header {
       display: flex;
       justify-content: space-between;
@@ -84,307 +326,401 @@
       flex-wrap: wrap;
       gap: 12px;
     }
-    .section-header h2 {
-      font-size: 18px;
-      font-weight: 500;
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
     }
-    
-    button {
-      background: transparent;
-      border: 0.5px solid rgba(0,0,0,0.2);
-      border-radius: 8px;
-      padding: 8px 16px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
+    .section-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* ─── USE CASE CARDS ─── */
+    .items { display: flex; flex-direction: column; gap: 14px; }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
       transition: all 0.2s;
-      color: #1a1a1a;
-    }
-    button:hover {
-      background: #f5f5f5;
-    }
-    button:active {
-      transform: scale(0.98);
-    }
-    button.primary {
-      background: #E6F1FB;
-      color: #185FA5;
-      border-color: rgba(24, 95, 165, 0.3);
-    }
-    
-    .items {
-      display: grid;
-      gap: 12px;
-    }
-    
-    .item {
-      background: white;
-      border: 0.5px solid rgba(0,0,0,0.1);
-      border-radius: 12px;
-      padding: 1.25rem;
       position: relative;
+      overflow: hidden;
     }
-    
-    .item-header {
+    .card::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: transparent;
+      border-radius: 3px 0 0 3px;
+      transition: background 0.2s;
+    }
+    .card:hover { box-shadow: var(--shadow-md); transform: translateX(2px); }
+    .card:hover::after { background: linear-gradient(180deg, var(--blue-400), var(--blue-200)); }
+
+    .card-top {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 0.75rem;
       gap: 12px;
+      margin-bottom: 1rem;
     }
-    .item-title {
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
       font-size: 16px;
-      font-weight: 500;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
       margin-bottom: 4px;
     }
-    .item-dept {
+    .card-meta {
       font-size: 13px;
-      color: #666;
-    }
-    .item-actions {
+      color: var(--text-muted);
       display: flex;
+      align-items: center;
       gap: 8px;
-      flex-shrink: 0;
-    }
-    .item-actions button {
-      padding: 4px 12px;
-      font-size: 13px;
-    }
-    
-    .item-meta {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 0.75rem;
       flex-wrap: wrap;
     }
-    .meta-item {
+    .card-meta span { display: flex; align-items: center; gap: 4px; }
+    .card-meta svg { width: 13px; height: 13px; }
+    .meta-dot { width: 3px; height: 3px; background: var(--border-strong); border-radius: 50%; }
+
+    .card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .card-actions .btn { height: 32px; padding: 0 12px; font-size: 12px; }
+
+    /* ─── STATUS BADGES ─── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    .badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .badge-pilot { background: var(--amber-50); color: var(--amber-600); }
+    .badge-production { background: var(--green-50); color: var(--green-600); }
+    .badge-scaling { background: var(--blue-50); color: var(--blue-600); }
+    .badge-planning { background: var(--gray-50); color: var(--gray-600); }
+
+    [data-theme="dark"] .badge-pilot { background: rgba(186,117,23,0.15); color: #EF9F27; }
+    [data-theme="dark"] .badge-production { background: rgba(59,109,17,0.15); color: #97C459; }
+    [data-theme="dark"] .badge-scaling { background: rgba(55,138,221,0.15); color: var(--blue-200); }
+    [data-theme="dark"] .badge-planning { background: rgba(136,135,128,0.15); color: var(--gray-400); }
+
+    /* ─── BEFORE / AFTER ─── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 0;
+      margin: 1rem 0;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .compare-col {
+      padding: 1rem 1.25rem;
+      background: var(--bg-surface);
+    }
+    .compare-col.after-col { background: var(--accent-bg); }
+    [data-theme="dark"] .compare-col.after-col { background: rgba(55,138,221,0.08); }
+
+    .compare-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-subtle);
+      border-right: 1px solid var(--border-subtle);
+      padding: 0 10px;
+    }
+    .compare-divider svg { width: 18px; height: 18px; color: var(--accent); }
+
+    .compare-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .compare-col .compare-label { color: var(--text-muted); }
+    .compare-col.after-col .compare-label { color: var(--accent); }
+
+    .compare-text {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+    .compare-col.after-col .compare-text { color: var(--text-primary); }
+
+    /* ─── AI OUTPUT / BUSINESS VALUE ─── */
+    .info-row {
+      margin-bottom: 0.75rem;
+    }
+    .info-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .info-text {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    /* ─── METRICS ROW ─── */
+    .metrics-row {
+      display: flex;
+      gap: 10px;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+    }
+    .metric-pill {
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 13px;
-      color: #666;
-    }
-    
-    .status-badge {
-      display: inline-block;
-      padding: 4px 12px;
+      padding: 6px 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
       border-radius: 8px;
       font-size: 12px;
-      font-weight: 500;
     }
-    .status-pilot {
-      background: #FAEEDA;
-      color: #854F0B;
+    .metric-pill svg { width: 13px; height: 13px; color: var(--accent); }
+    .metric-key { color: var(--text-muted); }
+    .metric-val { font-weight: 600; color: var(--text-primary); font-size: 13px; }
+
+    /* ─── EMPTY STATE ─── */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: var(--bg-card);
+      border: 1px dashed var(--border-medium);
+      border-radius: var(--radius-lg);
+      color: var(--text-muted);
     }
-    .status-production {
-      background: #EAF3DE;
-      color: #3B6D11;
-    }
-    .status-scaling {
-      background: #E6F1FB;
-      color: #185FA5;
-    }
-    .status-planning {
-      background: #f5f5f5;
-      color: #666;
-    }
-    
-    .before-after {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 0.75rem;
-      padding: 12px;
-      background: #f5f5f5;
-      border-radius: 8px;
-    }
-    .before-after-column {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .before-after-label {
-      font-size: 12px;
-      font-weight: 500;
-      color: #666;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .before-after-text {
-      font-size: 14px;
-      line-height: 1.5;
-    }
-    
-    .ai-output-section {
-      margin-bottom: 0.75rem;
-    }
-    .ai-output-label {
-      font-size: 12px;
-      font-weight: 500;
-      color: #666;
-      margin-bottom: 6px;
-    }
-    .ai-output-text {
-      font-size: 14px;
-      line-height: 1.6;
-      color: #1a1a1a;
-    }
-    
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-      padding-top: 0.75rem;
-      border-top: 0.5px solid rgba(0,0,0,0.1);
-    }
-    .metric {
-      display: flex;
-      flex-direction: column;
-    }
-    .metric-label {
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 2px;
-    }
-    .metric-value {
-      font-size: 16px;
-      font-weight: 500;
-    }
-    
-    .modal {
+    .empty-state svg { width: 40px; height: 40px; margin-bottom: 1rem; opacity: 0.4; }
+    .empty-state p { font-size: 14px; margin-top: 6px; }
+    .empty-state strong { font-family: 'Syne', sans-serif; font-size: 16px; color: var(--text-secondary); display: block; }
+
+    /* ─── MODAL ─── */
+    .modal-overlay {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.4);
+      inset: 0;
+      background: rgba(10, 22, 40, 0.6);
+      backdrop-filter: blur(4px);
       align-items: center;
       justify-content: center;
       z-index: 1000;
-      padding: 2rem;
+      padding: 1.5rem;
     }
-    .modal.active { display: flex; }
-    .modal-content {
-      background: white;
-      border-radius: 12px;
+    .modal-overlay.active { display: flex; }
+
+    .modal-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-xl);
       padding: 2rem;
-      max-width: 700px;
+      max-width: 680px;
       width: 100%;
       max-height: 90vh;
       overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      animation: modalIn 0.2s ease;
     }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
     .modal-header {
-      font-size: 18px;
-      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 1.5rem;
     }
-    .form-group {
+    .modal-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .modal-close {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border-medium);
+      background: var(--bg-surface);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: all 0.15s;
+    }
+    .modal-close:hover { background: #fcebeb; border-color: #f09595; color: #a32d2d; }
+    .modal-close svg { width: 16px; height: 16px; }
+
+    /* ─── FORM ─── */
+    .form-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
       margin-bottom: 1rem;
     }
+    .form-section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-group { margin-bottom: 0.85rem; }
+    .form-group:last-child { margin-bottom: 0; }
+
     .form-group label {
       display: block;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 500;
-      margin-bottom: 6px;
-      color: #666;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
     }
-    .form-group input, .form-group select, .form-group textarea {
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
       width: 100%;
-      font-size: 14px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 0.5px solid rgba(0,0,0,0.1);
-      background: white;
-      color: #1a1a1a;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-medium);
+      background: var(--bg-input);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      transition: all 0.2s;
+    }
+    .form-group select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238A96A3' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 32px;
     }
     .form-group textarea {
       min-height: 80px;
       resize: vertical;
-      font-family: inherit;
+      line-height: 1.5;
     }
-    .form-group textarea.tall {
-      min-height: 100px;
-    }
-    input:focus, select:focus, textarea:focus {
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
       outline: none;
-      border-color: rgba(24, 95, 165, 0.3);
-      box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.1);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-bg);
     }
-    .form-actions {
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .form-footer {
       display: flex;
-      gap: 12px;
       justify-content: flex-end;
+      gap: 10px;
       margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-subtle);
     }
-    
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: #666;
-      background: white;
-      border: 0.5px solid rgba(0,0,0,0.1);
-      border-radius: 12px;
-    }
-    
-    .export-buttons {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
+    .form-footer .btn { height: 42px; padding: 0 20px; font-size: 14px; }
 
-    .last-updated {
-      font-size: 13px;
-      color: #666;
-      margin-top: 0.5rem;
-    }
-
-    .form-section {
-      padding: 1rem;
-      background: #f5f5f5;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-    }
-    .form-section-title {
-      font-size: 14px;
+    /* ─── DEPT TAG ─── */
+    .dept-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
       font-weight: 500;
-      margin-bottom: 0.75rem;
-      color: #1a1a1a;
+      background: var(--accent-bg);
+      color: var(--accent-text);
+      border: 1px solid var(--border-medium);
     }
 
-    @media (max-width: 768px) {
-      .before-after {
-        grid-template-columns: 1fr;
-      }
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 640px) {
+      .header { flex-direction: column; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .compare-divider { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .page-wrapper { padding: 1rem 1rem 3rem; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>
-        <div class="logo">Z</div>
-        ZebPay AI Function Tracker
-      </h1>
-      <div class="subtitle">Live tracker of AI outputs and achievements across all departments</div>
-      <div class="last-updated" id="lastUpdated"></div>
+  <div class="page-wrapper">
+
+    <header class="header">
+      <div class="header-left">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div>
+          <div class="header-title">ZebPay AI Tracker</div>
+          <div class="header-subtitle">Live tracker of AI outputs and achievements across all departments</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+      </div>
     </header>
-    
-    <div class="stats" id="stats"></div>
-    
-    <div class="controls">
-      <input type="text" id="searchInput" placeholder="Search use cases, outputs, or departments...">
+
+    <div class="stats-grid" id="stats"></div>
+
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search use cases, outputs, departments…">
+      </div>
       <select id="deptFilter">
         <option value="">All departments</option>
-        <option value="People Care & Admin">People Care & Admin</option>
-        <option value="Tech & IT">Tech & IT</option>
-        <option value="Product">Product</option>
-        <option value="Marketing">Marketing</option>
-        <option value="Legal">Legal</option>
-        <option value="Compliance">Compliance</option>
-        <option value="Customer Care">Customer Care</option>
-        <option value="Accounts and Finance">Accounts and Finance</option>
-        <option value="Trade">Trade</option>
+        <option>People Care & Admin</option>
+        <option>Tech & IT</option>
+        <option>Product</option>
+        <option>Marketing</option>
+        <option>Legal</option>
+        <option>Compliance</option>
+        <option>Customer Care</option>
+        <option>Accounts and Finance</option>
+        <option>Trade</option>
       </select>
       <select id="statusFilter">
         <option value="">All statuses</option>
@@ -394,410 +730,429 @@
         <option value="scaling">Scaling</option>
       </select>
     </div>
-    
+
     <div class="section-header">
-      <h2>AI Use Cases</h2>
-      <div class="export-buttons">
-        <button onclick="exportData()">Export JSON</button>
-        <button onclick="importData()">Import JSON</button>
-        <button class="primary" onclick="openModal()">+ Add Use Case</button>
+      <div class="section-title">AI Use Cases</div>
+      <div class="section-actions">
+        <button class="btn" onclick="exportData()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+        <button class="btn" onclick="triggerImport()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Import
+        </button>
+        <button class="btn btn-primary" onclick="openModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Use Case
+        </button>
       </div>
     </div>
-    
+
     <div class="items" id="items"></div>
-    <div class="empty-state" id="emptyState" style="display: none;">
-      No use cases found. Click "Add Use Case" to get started.
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
+      </svg>
+      <strong>No use cases found</strong>
+      <p>Try adjusting your filters or add a new use case to get started.</p>
     </div>
+
   </div>
-  
-  <div class="modal" id="modal">
-    <div class="modal-content">
-      <div class="modal-header" id="modalTitle">Add AI Use Case</div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Add AI Use Case</div>
+        <button class="modal-close" onclick="closeModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
       <form id="form">
-        <div class="form-group">
-          <label>Department / Function</label>
-          <select id="department" required>
-            <option value="People Care & Admin">People Care & Admin</option>
-            <option value="Tech & IT">Tech & IT</option>
-            <option value="Product">Product</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Legal">Legal</option>
-            <option value="Compliance">Compliance</option>
-            <option value="Customer Care">Customer Care</option>
-            <option value="Accounts and Finance">Accounts and Finance</option>
-            <option value="Trade">Trade</option>
-          </select>
+        <div class="form-row" style="margin-bottom:0.85rem;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Department</label>
+            <select id="department" required>
+              <option>People Care & Admin</option>
+              <option>Tech & IT</option>
+              <option>Product</option>
+              <option>Marketing</option>
+              <option>Legal</option>
+              <option>Compliance</option>
+              <option>Customer Care</option>
+              <option>Accounts and Finance</option>
+              <option>Trade</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Status</label>
+            <select id="status" required>
+              <option value="planning">Planning</option>
+              <option value="pilot">Pilot</option>
+              <option value="production">Production</option>
+              <option value="scaling">Scaling</option>
+            </select>
+          </div>
         </div>
-        
+
         <div class="form-group">
           <label>Use Case Title</label>
-          <input type="text" id="title" required placeholder="e.g., Automated KYC document verification">
+          <input type="text" id="title" required placeholder="e.g. Automated KYC document verification">
         </div>
-        
+
         <div class="form-section">
           <div class="form-section-title">Process Comparison</div>
           <div class="form-group">
-            <label>Before AI (How we did it earlier)</label>
-            <textarea id="processBefore" class="tall" placeholder="Example: Manually reviewed each document, took 10 minutes per customer, prone to errors"></textarea>
+            <label>Before AI</label>
+            <textarea id="processBefore" placeholder="How did the team handle this before AI? Mention time, effort, errors…"></textarea>
           </div>
-          
           <div class="form-group">
-            <label>With AI (How we do it now with AI)</label>
-            <textarea id="processAfter" class="tall" placeholder="Example: AI scans and verifies documents in 30 seconds, flags issues automatically"></textarea>
+            <label>With AI</label>
+            <textarea id="processAfter" placeholder="How does AI change this? What's faster, automated, or improved?"></textarea>
           </div>
         </div>
 
         <div class="form-group">
           <label>AI Output / What AI Delivers</label>
-          <textarea id="aiOutput" class="tall" placeholder="Example: Verified KYC documents, risk scores, flagged suspicious documents, compliance reports"></textarea>
+          <textarea id="aiOutput" placeholder="Specific outputs: reports, scores, flagged items, drafts, summaries…"></textarea>
         </div>
-        
+
         <div class="form-group">
-          <label>Status</label>
-          <select id="status" required>
-            <option value="planning">Planning</option>
-            <option value="pilot">Pilot</option>
-            <option value="production">Production</option>
-            <option value="scaling">Scaling</option>
-          </select>
+          <label>Business Value</label>
+          <textarea id="businessValue" placeholder="Impact on customer experience, compliance, revenue, team efficiency…"></textarea>
         </div>
 
         <div class="form-section">
           <div class="form-section-title">Impact & Value</div>
-          
-          <div class="form-group">
-            <label>Time Saved (hours/week)</label>
-            <input type="number" id="timeSaved" min="0" step="0.5" placeholder="0">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Time Saved (hrs/week)</label>
+              <input type="number" id="timeSaved" min="0" step="0.5" placeholder="0">
+            </div>
+            <div class="form-group">
+              <label>Users Affected</label>
+              <input type="number" id="users" min="0" placeholder="0">
+            </div>
           </div>
-          
-          <div class="form-group">
-            <label>Cost Impact (₹/year - savings or reduction)</label>
-            <input type="number" id="costImpact" step="1000" placeholder="0">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Cost Impact (₹/year)</label>
+              <input type="number" id="costImpact" step="1000" placeholder="0">
+            </div>
+            <div class="form-group">
+              <label>Revenue Impact (₹/year)</label>
+              <input type="number" id="revenueImpact" step="1000" placeholder="0">
+            </div>
           </div>
-          
-          <div class="form-group">
-            <label>Revenue Impact (₹/year - additional revenue generated)</label>
-            <input type="number" id="revenueImpact" step="1000" placeholder="0">
-          </div>
+        </div>
 
-          <div class="form-group">
-            <label>Business Value (describe impact)</label>
-            <textarea id="businessValue" placeholder="Example: Faster onboarding, reduced fraud, better customer experience, compliance improvement"></textarea>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label>Users / Team Members Affected</label>
-          <input type="number" id="users" min="0" placeholder="0">
-        </div>
-        
         <div class="form-group">
           <label>Owner / Point of Contact</label>
           <input type="text" id="owner" placeholder="Name of person managing this">
         </div>
-        
-        <div class="form-actions">
-          <button type="button" onclick="closeModal()">Cancel</button>
-          <button type="submit" class="primary">Save</button>
+
+        <div class="form-footer">
+          <button type="button" class="btn" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Use Case</button>
         </div>
       </form>
     </div>
   </div>
-  
-  <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="handleImport(event)">
+
+  <input type="file" id="fileInput" accept=".json" style="display:none;" onchange="handleImport(event)">
 
   <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbwp8GgrBmKcuo3-8SkEnvP9wPHT-PbuhKucrZlogJJBuahsqMOQZ8O0I5h0wbTsWx8/exec";
     let data = [];
     let editingId = null;
-    const API_URL = "https://script.google.com/macros/s/AKfycbwp8GgrBmKcuo3-8SkEnvP9wPHT-PbuhKucrZlogJJBuahsqMOQZ8O0I5h0wbTsWx8/exec"
-    
+
+    // ─── THEME ───
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      localStorage.setItem('zebTheme', isDark ? 'light' : 'dark');
+      updateThemeIcon(!isDark);
+    }
+
+    function updateThemeIcon(isDark) {
+      document.getElementById('themeIcon').innerHTML = isDark
+        ? `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`
+        : `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+    }
+
+    (function initTheme() {
+      const saved = localStorage.getItem('zebTheme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+      updateThemeIcon(saved === 'dark');
+    })();
+
+    // ─── DATA ───
     async function loadData() {
       try {
-        const response = await fetch(API_URL);
-        data = await response.json();
-
+        const res = await fetch(API_URL);
+        data = await res.json();
         render();
       } catch (err) {
-        console.error("Failed loading data", err);
-        alert("Could not load tracker data");
+        console.error('Load failed', err);
       }
     }
 
     async function saveData(item) {
       try {
         await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8",
-        },
-        body: JSON.stringify(item),
-      });
-
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(item)
+        });
       } catch (err) {
-        console.error("Save failed", err);
-        alert("Failed saving data");
+        console.error('Save failed', err);
       }
     }
-    
-    function updateLastModified() {
-      const lastUpdated = localStorage.getItem('zebpayAITrackerLastUpdated');
-      if (lastUpdated) {
-        const date = new Date(lastUpdated);
-        document.getElementById('lastUpdated').textContent = 
-          `Last updated: ${date.toLocaleDateString('en-IN')} at ${date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}`;
-      }
-    }
-    
+
+    // ─── RENDER ───
     function render() {
       renderStats();
       renderItems();
     }
-    
+
     function renderStats() {
-      const totalUseCases = data.length;
-      const totalTimeSaved = data.reduce((sum, item) => sum + (item.timeSaved || 0), 0);
-      const totalCostImpact = data.reduce((sum, item) => sum + (item.costImpact || 0), 0);
-      const totalRevenueImpact = data.reduce((sum, item) => sum + (item.revenueImpact || 0), 0);
-      const productionCount = data.filter(item => item.status === 'production' || item.status === 'scaling').length;
-      const totalUsers = data.reduce((sum, item) => sum + (item.users || 0), 0);
-      
+      const total = data.length;
+      const inProd = data.filter(d => d.status === 'production' || d.status === 'scaling').length;
+      const users = data.reduce((s, d) => s + (d.users || 0), 0);
+      const time = data.reduce((s, d) => s + (d.timeSaved || 0), 0);
+      const cost = data.reduce((s, d) => s + (d.costImpact || 0), 0);
+      const rev = data.reduce((s, d) => s + (d.revenueImpact || 0), 0);
+
       document.getElementById('stats').innerHTML = `
-        <div class="stat-card">
-          <div class="stat-label">Total use cases</div>
-          <div class="stat-value">${totalUseCases}</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">In production</div>
-          <div class="stat-value">${productionCount}</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Team members using AI</div>
-          <div class="stat-value">${totalUsers}</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Time saved / week</div>
-          <div class="stat-value">${Math.round(totalTimeSaved)} hrs</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Cost impact / year</div>
-          <div class="stat-value">₹${(totalCostImpact / 100000).toFixed(1)}L</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Revenue impact / year</div>
-          <div class="stat-value">₹${(totalRevenueImpact / 100000).toFixed(1)}L</div>
-        </div>
+        ${statCard('Use Cases', total, '')}
+        ${statCard('In Production', inProd, 'blue')}
+        ${statCard('Team Members', users, '')}
+        ${statCard('Hrs Saved / Week', Math.round(time), '')}
+        ${statCard('Cost Impact / Yr', '₹' + (cost/100000).toFixed(1) + 'L', 'blue')}
+        ${statCard('Revenue Impact / Yr', '₹' + (rev/100000).toFixed(1) + 'L', 'blue')}
       `;
     }
-    
+
+    function statCard(label, value, cls) {
+      return `<div class="stat-card">
+        <div class="stat-label">${label}</div>
+        <div class="stat-value ${cls}">${value}</div>
+      </div>`;
+    }
+
     function renderItems() {
       const search = document.getElementById('searchInput').value.toLowerCase();
-      const deptFilter = document.getElementById('deptFilter').value;
-      const statusFilter = document.getElementById('statusFilter').value;
-      
-      let filtered = data.filter(item => {
-        const matchesSearch = !search || 
-          item.title.toLowerCase().includes(search) || 
-          (item.processBefore && item.processBefore.toLowerCase().includes(search)) ||
-          (item.processAfter && item.processAfter.toLowerCase().includes(search)) ||
-          (item.aiOutput && item.aiOutput.toLowerCase().includes(search)) ||
-          item.department.toLowerCase().includes(search) ||
-          (item.owner && item.owner.toLowerCase().includes(search));
-        const matchesDept = !deptFilter || item.department === deptFilter;
-        const matchesStatus = !statusFilter || item.status === statusFilter;
-        return matchesSearch && matchesDept && matchesStatus;
+      const dept = document.getElementById('deptFilter').value;
+      const status = document.getElementById('statusFilter').value;
+
+      const filtered = data.filter(d => {
+        const s = search;
+        const matchSearch = !s ||
+          d.title.toLowerCase().includes(s) ||
+          (d.processBefore||'').toLowerCase().includes(s) ||
+          (d.processAfter||'').toLowerCase().includes(s) ||
+          (d.aiOutput||'').toLowerCase().includes(s) ||
+          d.department.toLowerCase().includes(s) ||
+          (d.owner||'').toLowerCase().includes(s);
+        return matchSearch && (!dept || d.department === dept) && (!status || d.status === status);
       });
-      
+
       const container = document.getElementById('items');
-      const emptyState = document.getElementById('emptyState');
-      
-      if (filtered.length === 0) {
+      const empty = document.getElementById('emptyState');
+
+      if (!filtered.length) {
         container.innerHTML = '';
-        emptyState.style.display = 'block';
+        empty.style.display = 'block';
         return;
       }
-      
-      emptyState.style.display = 'none';
-      container.innerHTML = filtered.map(item => `
-        <div class="item">
-          <div class="item-header">
-            <div style="flex: 1;">
-              <div class="item-title">${escapeHtml(item.title)}</div>
-              <div class="item-dept">${escapeHtml(item.department)}${item.owner ? ' • ' + escapeHtml(item.owner) : ''}</div>
+      empty.style.display = 'none';
+
+      container.innerHTML = filtered.map(item => {
+        const hasCompare = item.processBefore || item.processAfter;
+        const hasMetrics = item.timeSaved || item.costImpact || item.revenueImpact;
+
+        return `<div class="card">
+          <div class="card-top">
+            <div style="flex:1;">
+              <div class="card-title">${esc(item.title)}</div>
+              <div class="card-meta">
+                <span class="dept-tag">${esc(item.department)}</span>
+                ${item.owner ? `<span class="meta-dot"></span><span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  ${esc(item.owner)}</span>` : ''}
+                ${item.users ? `<span class="meta-dot"></span><span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  ${item.users} members</span>` : ''}
+              </div>
             </div>
-            <div class="item-actions">
-              <button onclick="editItem(${item.id})">Edit</button>
-              <button onclick="deleteItem(${item.id})">Delete</button>
-            </div>
-          </div>
-          <div class="item-meta">
-            <span class="status-badge status-${item.status}">${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</span>
-            ${item.users ? `<span class="meta-item">${item.users} team members</span>` : ''}
-          </div>
-          
-          ${item.processBefore || item.processAfter ? `
-          <div class="before-after">
-            <div class="before-after-column">
-              <div class="before-after-label">Before AI</div>
-              <div class="before-after-text">${escapeHtml(item.processBefore || 'Not specified')}</div>
-            </div>
-            <div class="before-after-column">
-              <div class="before-after-label">With AI</div>
-              <div class="before-after-text">${escapeHtml(item.processAfter || 'Not specified')}</div>
+            <div class="card-actions" style="display:flex;align-items:center;gap:8px;">
+              <span class="badge badge-${item.status}">${item.status.charAt(0).toUpperCase()+item.status.slice(1)}</span>
+              <button class="btn" onclick="editItem(${item.id})">Edit</button>
+              <button class="btn" onclick="deleteItem(${item.id})" style="color:#a32d2d;border-color:#f09595;">Delete</button>
             </div>
           </div>
-          ` : ''}
-          
-          ${item.aiOutput ? `
-          <div class="ai-output-section">
-            <div class="ai-output-label">AI Output</div>
-            <div class="ai-output-text">${escapeHtml(item.aiOutput)}</div>
-          </div>
-          ` : ''}
-          
-          ${item.businessValue ? `
-          <div class="ai-output-section">
-            <div class="ai-output-label">Business Value</div>
-            <div class="ai-output-text">${escapeHtml(item.businessValue)}</div>
-          </div>
-          ` : ''}
-          
-          <div class="metrics">
-            ${item.timeSaved ? `<div class="metric"><div class="metric-label">Time saved / week</div><div class="metric-value">${Math.round(item.timeSaved)} hrs</div></div>` : ''}
-            ${item.costImpact ? `<div class="metric"><div class="metric-label">Cost savings / year</div><div class="metric-value">₹${(item.costImpact / 100000).toFixed(1)}L</div></div>` : ''}
-            ${item.revenueImpact ? `<div class="metric"><div class="metric-label">Revenue impact / year</div><div class="metric-value">₹${(item.revenueImpact / 100000).toFixed(1)}L</div></div>` : ''}
-          </div>
-        </div>
-      `).join('');
+
+          ${hasCompare ? `
+          <div class="compare-grid">
+            <div class="compare-col">
+              <div class="compare-label">Before AI</div>
+              <div class="compare-text">${esc(item.processBefore || 'Not specified')}</div>
+            </div>
+            <div class="compare-divider">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </div>
+            <div class="compare-col after-col">
+              <div class="compare-label">With AI</div>
+              <div class="compare-text">${esc(item.processAfter || 'Not specified')}</div>
+            </div>
+          </div>` : ''}
+
+          ${item.aiOutput ? `<div class="info-row">
+            <div class="info-label">AI Output</div>
+            <div class="info-text">${esc(item.aiOutput)}</div>
+          </div>` : ''}
+
+          ${item.businessValue ? `<div class="info-row">
+            <div class="info-label">Business Value</div>
+            <div class="info-text">${esc(item.businessValue)}</div>
+          </div>` : ''}
+
+          ${hasMetrics ? `<div class="metrics-row">
+            ${item.timeSaved ? `<div class="metric-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span class="metric-key">Time saved</span>
+              <span class="metric-val">${Math.round(item.timeSaved)} hrs/wk</span>
+            </div>` : ''}
+            ${item.costImpact ? `<div class="metric-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              <span class="metric-key">Cost savings</span>
+              <span class="metric-val">₹${(item.costImpact/100000).toFixed(1)}L/yr</span>
+            </div>` : ''}
+            ${item.revenueImpact ? `<div class="metric-pill">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              <span class="metric-key">Revenue impact</span>
+              <span class="metric-val">₹${(item.revenueImpact/100000).toFixed(1)}L/yr</span>
+            </div>` : ''}
+          </div>` : ''}
+        </div>`;
+      }).join('');
     }
-    
+
+    // ─── MODAL ───
     function openModal(id = null) {
       editingId = id;
-      const modal = document.getElementById('modal');
-      const form = document.getElementById('form');
-      const title = document.getElementById('modalTitle');
-      
+      document.getElementById('modalTitle').textContent = id ? 'Edit Use Case' : 'Add AI Use Case';
       if (id) {
         const item = data.find(d => d.id === id);
-        title.textContent = 'Edit Use Case';
         document.getElementById('department').value = item.department;
+        document.getElementById('status').value = item.status;
         document.getElementById('title').value = item.title;
         document.getElementById('processBefore').value = item.processBefore || '';
         document.getElementById('processAfter').value = item.processAfter || '';
         document.getElementById('aiOutput').value = item.aiOutput || '';
         document.getElementById('businessValue').value = item.businessValue || '';
-        document.getElementById('status').value = item.status;
         document.getElementById('timeSaved').value = item.timeSaved || '';
+        document.getElementById('users').value = item.users || '';
         document.getElementById('costImpact').value = item.costImpact || '';
         document.getElementById('revenueImpact').value = item.revenueImpact || '';
-        document.getElementById('users').value = item.users || '';
         document.getElementById('owner').value = item.owner || '';
       } else {
-        title.textContent = 'Add Use Case';
-        form.reset();
+        document.getElementById('form').reset();
       }
-      
-      modal.classList.add('active');
+      document.getElementById('modal').classList.add('active');
     }
-    
+
     function closeModal() {
       document.getElementById('modal').classList.remove('active');
       editingId = null;
     }
-    
-    function editItem(id) {
-      openModal(id);
-    }
-    
+
+    function editItem(id) { openModal(id); }
+
     function deleteItem(id) {
-      if (confirm('Delete this use case?')) {
-        data = data.filter(item => item.id !== id);
-        saveData();
-        render();
-      }
+      if (!confirm('Delete this use case?')) return;
+      data = data.filter(d => d.id !== id);
+      saveData({ _action: 'delete', id });
+      render();
     }
-    
-    function exportData() {
-      const json = JSON.stringify(data, null, 2);
-      const blob = new Blob([json], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `zebpay-ai-tracker-${new Date().toISOString().slice(0, 10)}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-    
-    function importData() {
-      document.getElementById('fileInput').click();
-    }
-    
-    function handleImport(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const imported = JSON.parse(e.target.result);
-          if (confirm(`Import ${imported.length} use cases? This will replace current data.`)) {
-            data = imported;
-            saveData();
-            render();
-          }
-        } catch (err) {
-          alert('Invalid JSON file');
-        }
-      };
-      reader.readAsText(file);
-      event.target.value = '';
-    }
-    
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-    
-    document.getElementById('form').addEventListener('submit', async (e) => {
+
+    // ─── FORM SUBMIT ───
+    document.getElementById('form').addEventListener('submit', async e => {
       e.preventDefault();
-      
-      const formData = {
+      const item = {
         id: editingId || Date.now(),
         department: document.getElementById('department').value,
+        status: document.getElementById('status').value,
         title: document.getElementById('title').value,
         processBefore: document.getElementById('processBefore').value,
         processAfter: document.getElementById('processAfter').value,
         aiOutput: document.getElementById('aiOutput').value,
         businessValue: document.getElementById('businessValue').value,
-        status: document.getElementById('status').value,
         timeSaved: parseFloat(document.getElementById('timeSaved').value) || 0,
+        users: parseInt(document.getElementById('users').value) || 0,
         costImpact: parseFloat(document.getElementById('costImpact').value) || 0,
         revenueImpact: parseFloat(document.getElementById('revenueImpact').value) || 0,
-        users: parseInt(document.getElementById('users').value) || 0,
         owner: document.getElementById('owner').value
       };
-      
       if (editingId) {
-        const index = data.findIndex(item => item.id === editingId);
-        data[index] = formData;
+        const idx = data.findIndex(d => d.id === editingId);
+        data[idx] = item;
       } else {
-        data.push(formData);
+        data.push(item);
       }
-      
-      await saveData(formData);
+      await saveData(item);
       await loadData();
-
       closeModal();
     });
-    
+
+    // ─── IMPORT / EXPORT ───
+    function exportData() {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `zebpay-ai-tracker-${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function triggerImport() { document.getElementById('fileInput').click(); }
+
+    function handleImport(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        try {
+          const imported = JSON.parse(ev.target.result);
+          if (confirm(`Import ${imported.length} use cases? This replaces current data.`)) {
+            data = imported;
+            saveData(data);
+            render();
+          }
+        } catch { alert('Invalid JSON file.'); }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    }
+
+    // ─── HELPERS ───
+    function esc(text) {
+      const d = document.createElement('div');
+      d.textContent = text;
+      return d.innerHTML;
+    }
+
+    // ─── EVENTS ───
     document.getElementById('searchInput').addEventListener('input', renderItems);
     document.getElementById('deptFilter').addEventListener('change', renderItems);
     document.getElementById('statusFilter').addEventListener('change', renderItems);
-    
-    document.getElementById('modal').addEventListener('click', (e) => {
+    document.getElementById('modal').addEventListener('click', e => {
       if (e.target.id === 'modal') closeModal();
     });
-    
+
     loadData();
   </script>
 </body>
